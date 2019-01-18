@@ -9,7 +9,7 @@ Dirty = False
 class GraphicsPixmapItem(QGraphicsPixmapItem):        #add by yangrongdong
     def __init__(self,scene, pixmap, position, matrix=QTransform()):
         super(QGraphicsPixmapItem, self).__init__(pixmap)
-        self.setFlags(QGraphicsItem.ItemIsSelectable|QGraphicsItem.ItemIsMovable)
+        self.setFlags(QGraphicsItem.ItemIsSelectable) #|QGraphicsItem.ItemIsMovable)
         self.setPos(position)
         #self.setOpacity(0.8)
         self.setTransform(matrix)

@@ -62,8 +62,8 @@ class Ui2_MainWindow(object):
         self.view.setMouseTracking(True)  # //
         self.view.setDragMode(QGraphicsView.RubberBandDrag)
 
-        self.scene = QGraphicsScene(-300,-200,600,200) #self #//创建QGraphicsScene
-        #self.scene.setSceneRect(-PageSize[0]/2, -PageSize[1]/2, PageSize[0]/2, PageSize[1]/2)
+        self.scene = QGraphicsScene(-300,-200,600,400) #self #//创建QGraphicsScene
+        #self.scene.setSceneRect(-PageSize[0]/2, -PageSize[1]/2, PageSize[0], PageSize[1])
 
         self.view.setScene(self.scene) #//与view关联
 
@@ -73,11 +73,13 @@ class Ui2_MainWindow(object):
         
         #slef.setCentralWidget(self.view)
 
-        #设置槽函数
+        #设置view中自定义事件对应的槽函数
         #button.clicked.connect(slot)
         self.view.mouseMovePoint.connect(self.on_mouseMovePoint)
         
         self.view.mouseClicked.connect(self.on_mouseClicked)
+        
+        self.view.mouseRelease.connect(self.on_mouseRelease)
         
         self.view.keyPress.connect(self.on_keyPress)
         
