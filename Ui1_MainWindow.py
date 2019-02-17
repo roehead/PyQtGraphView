@@ -5,6 +5,10 @@ from res_rc import *
 
 class Ui1_MainWindow(object):
     def setupUi1(self, GMainWindow):
+        '''
+        《QT5.9开发指南》示例代码"(C++)
+            samp8_5GraphicsDraw之UI之desgner部分
+        '''
         GMainWindow.setObjectName("GMainWindow")
         GMainWindow.resize(731, 460)
         self.centralWidget = QtWidgets.QWidget(GMainWindow)

@@ -2,6 +2,8 @@
 # -*- coding:utf-8 -*-
 
 import sys
+import os
+import cv2
 from MainWindow import *
 from PyQt5.QtWidgets import  QApplication
 
@@ -20,12 +22,13 @@ PointSize = 10
 
 #Dirty = False
 
-#ItemId = 1          #»æÍ¼Ïî×Ô¶¨ÒåÊı¾İµÄkey
-#ItemDesciption = 2  #»æÍ¼Ïî×Ô¶¨ÒåÊı¾İµÄkey
+#ItemId = 1          #ç»˜å›¾é¡¹è‡ªå®šä¹‰æ•°æ®çš„key
+#ItemDesciption = 2  #ç»˜å›¾é¡¹è‡ªå®šä¹‰æ•°æ®çš„key
 
-#seqNum=0   #»æÍ¼ÏîË÷Òı
-#backZ=0    #»æÍ¼ÏîË÷Òı
-#frontZ=0   #»æÍ¼ÏîË÷Òı
+#seqNum=0   #ç»˜å›¾é¡¹ç´¢å¼•
+#backZ=0    #ç»˜å›¾é¡¹ç´¢å¼•
+#frontZ=0   #ç»˜å›¾é¡¹ç´¢å¼•
+
 
 app = QApplication(sys.argv)
 form = GMainWindow()

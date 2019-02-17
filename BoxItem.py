@@ -4,7 +4,7 @@
 import functools
 
 from PyQt5.QtCore import QRectF, Qt
-from PyQt5.QtGui import QTransform, QPen
+from PyQt5.QtGui import QTransform, QPen, QBrush
 from PyQt5.QtWidgets import QMenu, QStyle, QGraphicsItem
 
 #PointSize = 10
@@ -13,7 +13,7 @@ Dirty = False
 
 class BoxItem(QGraphicsItem):
 
-    def __init__(self, position, scene, style=Qt.SolidLine,
+    def __init__(self, position, scene, style=Qt.SolidLine,brush=Qt.cyan,
                  rect=None, matrix=QTransform()):
         super(BoxItem, self).__init__()
         self.setFlags(QGraphicsItem.ItemIsSelectable|
@@ -25,6 +25,7 @@ class BoxItem(QGraphicsItem):
                           2 * PointSize)
         self.rect = rect
         self.style = style
+        self.brush = brush
         self.setPos(position)
         self.setTransform(matrix)
         scene.clearSelection()
@@ -47,9 +48,12 @@ class BoxItem(QGraphicsItem):
         pen = QPen(self.style)
         pen.setColor(Qt.black)
         pen.setWidth(1)
+        brh = QBrush(Qt.SolidPattern)
+        brh.setColor(self.brush)
         if option.state & QStyle.State_Selected:
             pen.setColor(Qt.blue)
         painter.setPen(pen)
+        painter.setBrush(brh)
         painter.drawRect(self.rect)
 
 

@@ -41,7 +41,17 @@ FileVersion = 1
 
 
 class GMainWindow(QMainWindow, Ui1_MainWindow, Ui2_MainWindow, Slot_MainWindow): #QDialog
-    
+    '''
+    本模块基于以下原代码修改：
+        http://blog.sina.com.cn/s/blog_c22e36090102x1p3.html
+        《python3+PyQt5 图形项的自定义和交互--实现page Designer应用程序》
+        by basisworker in 2017-03-06 09:58:31
+    修改记录：
+        1.原主对话框类QDialog改为QMainWindow
+        2.图形像类拆分为独立模块文件
+        4.界面部分代码移到Ui2_MainWindow模块（类）
+        5.槽函数部分Slot——MainWindow模块（类）
+    '''
     #global frontZ,seqNum,backZ,ItemId,ItemDesciption
     #global MAC, PageSize, PointSize
     
@@ -72,8 +82,7 @@ class GMainWindow(QMainWindow, Ui1_MainWindow, Ui2_MainWindow, Slot_MainWindow):
         #item.setPos(-PageSize[0]/4, -PageSize[1]/4)
         self.borders.append(item)
         self.view.set_item_index(item,"矩形3")
-        self.view.resize(PageSize[0], PageSize[1])
-
+        #self.view.resize(PageSize[0], PageSize[1])
 
     def removeBorders(self):
         while self.borders:
@@ -322,23 +331,31 @@ class GMainWindow(QMainWindow, Ui1_MainWindow, Ui2_MainWindow, Slot_MainWindow):
         stream >> position >> matrix
         if offset:
             position += QPointF(offset, offset)
-        if type == "Text":
+        if type == "文字2":
             text = ""
             font = QFont()
             text=stream.readQString()
             stream >> font
             item=TextItem(text, position, self.scene, font, matrix)
-        elif type == "Box":
+        elif type == "矩形2":
             rect = QRectF()
             stream >> rect
             style = Qt.PenStyle(stream.readInt16())
-            item=BoxItem(position, self.scene, style, rect, matrix)
-        elif type == "Pixmap":
+            brush = stream.readInt16()
+            item=BoxItem(position, self.scene, style, brush, rect, matrix)
+        elif type == "矩形":
+            rect = QRectF()
+            stream >> rect
+            style = Qt.PenStyle(stream.readInt16())
+            brush = stream.readInt16()
+            item=BoxItem(position, self.scene, style, brush, rect, matrix)
+        elif type == "图片":
             pixmap = QPixmap()
             stream >> pixmap
             item = GraphicsPixmapItem(self.scene, pixmap, 
                                       position, matrix)
-        if type in ('Text','Box','Pixmap'):
+            item.CompMode = stream.readInt16()
+        if type in ('文字2','矩形','矩形2','图片'):
             sc          = stream.readFloat()
             rotateangle = stream.readFloat()
             item_Zvalue = stream.readInt16()
@@ -346,28 +363,41 @@ class GMainWindow(QMainWindow, Ui1_MainWindow, Ui2_MainWindow, Slot_MainWindow):
             item_desc   = stream.readQString()
             item.setRotation(rotateangle)
             item.setScale(sc)
-            QMessageBox.warning(self, "read"+type, "ItemDesciption: "+item_desc)
+            #QMessageBox.warning(self, "read"+type, "ItemDesciption: "+item_desc)
             item.setZValue(item_Zvalue)
             item.setData(self.view.ItemId,item_order)
             item.setData(self.view.ItemDesciption, item_desc)
 
 
     def writeItemToStream(self, stream, item):
-        if isinstance(item, TextItem):
-            stream.writeQString("Text")
+        Item_Desc = item.data(self.view.ItemDesciption)
+        if Item_Desc in ('矩形','矩形2','图片','文字2'):
+            stream.writeQString(Item_Desc)
+        #if isinstance(item, TextItem):
+        if Item_Desc == '文字2':
+            #stream.writeQString('Text')
             stream<<item.pos()<< item.transform() 
             stream.writeQString(item.toPlainText())
             stream<< item.font()
-        elif isinstance(item, GraphicsPixmapItem):
-            stream.writeQString("Pixmap")
+        #elif isinstance(item, GraphicsPixmapItem):
+        elif Item_Desc == '图片':
+            #stream.writeQString('Pixmap')
             stream << item.pos() << item.transform() << item.pixmap()
-        elif (isinstance(item, BoxItem) or (isinstance(item, QGraphicsRectItem) 
-                             and item.data(self.view.ItemDesciption)!=('矩形3'))):
-            stream.writeQString("Box")
+            stream.writeInt16(item.CompMode)
+        #elif (isinstance(item, BoxItem) or (isinstance(item, QGraphicsRectItem) 
+        #                     and item.data(self.view.ItemDesciption)!=('矩形3'))):
+        elif Item_Desc == '矩形2':
+            #stream.writeQString('Box')
             stream<< item.pos() << item.transform() << item.rect
             stream.writeInt16(item.style)
+            stream.writeInt16(item.brush)
+        elif Item_Desc == '矩形':
+            #stream.writeQString('Box')
+            stream<< item.pos() << item.transform() << item.rect
+            stream.writeInt16(item.style)
+            stream.writeInt16(item.brush)
 
-        if item.data(self.view.ItemDesciption)in ('矩形','矩形2','图片','文字2'): # ,'椭圆','圆形','梯形','直线','文字'):
+        if Item_Desc in ('矩形','矩形2','图片','文字2'): # ,'椭圆','圆形','梯形','直线','文字'):
             #QMessageBox.warning(self, "debug", item.data(self.view.ItemDesciption))
             stream.writeFloat(item.scale())
             stream.writeFloat(item.rotation())#add by yangrongdong

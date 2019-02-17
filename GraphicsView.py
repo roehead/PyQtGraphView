@@ -24,8 +24,11 @@ class GraphicsView(QGraphicsView):
 
     m_point1 = QPoint(0,0)
     m_point2 = QPoint(0,0)
+    m_point_item = QPoint(0,0)
+    m_drag_item = None
     m_rect_items = []
     m_start_draw = False
+    m_mouse_press = False
 
     def __init__(self, parent=None):
         super(GraphicsView, self).__init__(parent)
@@ -82,7 +85,7 @@ class GraphicsView(QGraphicsView):
     def mouseReleaseEvent(self, event):
         if (event.button()==Qt.LeftButton):
             point = QPoint()
-            self.m_start_draw = False
             point=event.pos() #QGraphicsView的坐标
             self.mouseRelease.emit(point) #释放信号
+            self.m_start_draw = False
         super().mouseReleaseEvent(event)
